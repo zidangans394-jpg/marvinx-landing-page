@@ -2,617 +2,1338 @@
 <html lang="id">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-    <title>MARVINX TEAM | Dashboard</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>MARVINX TEAM PROJECT</title>
     <link rel="icon" href="logo.png" type="image/png">
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700&family=Orbitron:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Orbitron:wght@500;700;900&family=Rajdhani:wght@500;600;700&display=swap" rel="stylesheet">
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
+        :root {
+            --theme-color: 0, 93, 253;
+            --bg-base: #030305;
+            --surface: rgba(15, 15, 20, 0.6);
+            --border: rgba(255, 255, 255, 0.05);
+            --border-highlight: rgba(var(--theme-color), 0.5);
+            --text-main: #ffffff;
+            --text-muted: #888899;
         }
 
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        ::-webkit-scrollbar { width: 0; background: transparent; }
+        html { scrollbar-width: none; scroll-behavior: smooth; background-color: var(--bg-base); }
+        
         body {
             font-family: 'Inter', sans-serif;
-            background: #03050b;
-            color: #eef2ff;
-            scroll-behavior: smooth;
+            background-color: transparent;
+            color: var(--text-main);
+            overflow-x: hidden;
+            line-height: 1.6;
         }
 
-        .font-display {
-            font-family: 'Orbitron', monospace;
-        }
+        h1, h2, h3, h4, .font-tech { font-family: 'Orbitron', sans-serif; }
+        .font-condensed { font-family: 'Rajdhani', sans-serif; }
 
-        /* Card with flex column for button alignment */
-        .card {
-            background: rgba(10, 15, 27, 0.75);
-            backdrop-filter: blur(4px);
-            border: 1px solid rgba(0, 102, 255, 0.25);
-            border-radius: 28px;
-            transition: all 0.2s ease;
-            display: flex;
-            flex-direction: column;
-            height: 100%;
+        /* PRELOADER */
+        #preloader {
+            position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+            background-color: var(--bg-base); z-index: 9999;
+            display: flex; align-items: center; justify-content: center;
+            transition: opacity 0.6s ease-out, visibility 0.6s ease-out;
         }
-
-        .card:hover {
-            border-color: #2c7aff;
-            transform: translateY(-3px);
-            background: rgba(15, 23, 42, 0.85);
-        }
-
-        .price-row {
-            display: flex;
-            justify-content: space-between;
-            align-items: baseline;
-            padding: 0.5rem 0;
-            border-bottom: 1px solid rgba(0, 102, 255, 0.15);
-            font-size: 0.85rem;
-        }
-
-        .price-duration {
-            color: #9ca3af;
-            font-weight: 500;
-        }
-
-        .price-value {
-            color: #60a5fa;
-            font-weight: 700;
-        }
-
-        .btn-order {
-            width: 100%;
-            background: #0066ff;
+        #preloader.fade-out { opacity: 0; visibility: hidden; }
+        .loader-content { display: flex; flex-direction: column; align-items: center; gap: 2rem; width: 100%; max-width: 300px; padding: 0 20px; }
+        .loader-logo {
+            width: 120px; height: 120px; border-radius: 16px; object-fit: cover;
             border: none;
-            padding: 0.6rem 0;
-            border-radius: 40px;
-            font-weight: 600;
-            color: white;
-            transition: all 0.2s;
-            cursor: pointer;
-            font-size: 0.85rem;
-            margin-top: 1rem;
+            animation: pulse-logo 2s infinite;
+        }
+        @keyframes pulse-logo {
+            0%, 100% { transform: scale(1); box-shadow: 0 0 30px rgba(var(--theme-color), 0.4); }
+            50% { transform: scale(1.05); box-shadow: 0 0 50px rgba(var(--theme-color), 0.8); }
+        }
+        .loader-bar-container { width: 100%; height: 4px; background: rgba(255, 255, 255, 0.1); border-radius: 4px; overflow: hidden; position: relative; }
+        .loader-bar { height: 100%; width: 0%; background: rgb(var(--theme-color)); border-radius: 4px; box-shadow: 0 0 10px rgb(var(--theme-color)); transition: width 0.2s ease; }
+        .loader-text { font-family: 'Orbitron', sans-serif; font-size: 0.8rem; color: var(--text-muted); letter-spacing: 3px; text-transform: uppercase; }
+
+        /* ATMOSPHERE */
+        .ambient-glow {
+            position: fixed; top: -10%; left: 50%; transform: translateX(-50%);
+            width: 80vw; height: 60vh;
+            background: radial-gradient(ellipse at center, rgba(var(--theme-color), 0.15) 0%, transparent 60%);
+            filter: blur(80px); z-index: -1; pointer-events: none;
+        }
+        .noise-overlay {
+            position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+            background: url('data:image/svg+xml;utf8,%3Csvg viewBox=%220 0 200 200%22 xmlns=%22http://www.w3.org/2000/svg%22%3E%3Cfilter id=%22noiseFilter%22%3E%3CfeTurbulence type=%22fractalNoise%22 baseFrequency=%220.65%22 numOctaves=%223%22 stitchTiles=%22stitch%22/%3E%3C/filter%3E%3Crect width=%22100%25%22 height=%22100%25%22 filter=%22url(%23noiseFilter)%22/%3E%3C/svg%3E');
+            opacity: 0.03; z-index: -1; pointer-events: none; mix-blend-mode: overlay;
         }
 
-        .btn-order:hover {
-            background: #1a6eff;
-            transform: scale(0.98);
-        }
-
-        .btn-primary {
-            background: #0066ff;
-            padding: 0.7rem 1.8rem;
-            border-radius: 40px;
-            font-weight: 600;
-            transition: all 0.2s;
-            border: none;
-            color: white;
-            cursor: pointer;
-        }
-
-        .btn-primary:hover {
-            background: #1a6eff;
-            transform: translateY(-1px);
-        }
-
-        .btn-outline {
-            background: transparent;
-            border: 1.5px solid #2c3e66;
-            padding: 0.6rem 1.6rem;
-            border-radius: 40px;
-            font-weight: 500;
-            transition: all 0.2s;
-            cursor: pointer;
-            color: #cbd5ff;
-        }
-
-        .btn-outline:hover {
-            border-color: #0066ff;
-            background: rgba(0, 102, 255, 0.1);
-            color: white;
-        }
-
-        .reveal {
-            opacity: 0;
-            transform: translateY(24px);
-            transition: all 0.6s ease-out;
-        }
-
-        .reveal.active {
-            opacity: 1;
-            transform: translateY(0);
-        }
-
-        .glass-nav {
-            background: rgba(3, 5, 11, 0.85);
-            backdrop-filter: blur(12px);
-            border-bottom: 1px solid rgba(0, 102, 255, 0.2);
-        }
-
-        .bg-soft {
-            background: radial-gradient(circle at 20% 30%, rgba(0, 102, 255, 0.05), transparent 70%);
-            position: fixed;
-            inset: 0;
+        .cyber-grid {
+            position: fixed; bottom: 0; left: -50%; width: 200vw; height: 60vh;
+            background-image: 
+                linear-gradient(rgba(var(--theme-color), 0.2) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(var(--theme-color), 0.2) 1px, transparent 1px);
+            background-size: 50px 50px;
+            transform: perspective(500px) rotateX(60deg);
+            transform-origin: bottom center;
+            animation: grid-scroll 3s linear infinite;
+            z-index: -2;
+            -webkit-mask-image: linear-gradient(to top, rgba(0,0,0,1) 0%, rgba(0,0,0,0) 100%);
             pointer-events: none;
-            z-index: 0;
+            opacity: 0.5;
+        }
+        @keyframes grid-scroll {
+            0% { transform: perspective(500px) rotateX(60deg) translateY(0); }
+            100% { transform: perspective(500px) rotateX(60deg) translateY(50px); }
         }
 
-        .container-relative {
+        /* NAVBAR */
+        .navbar {
+            position: fixed; top: 0; width: 100%; z-index: 100;
+            padding: 1.5rem 2rem; transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+            border-bottom: 1px solid transparent;
+        }
+        .navbar.scrolled {
+            padding: 1rem 2rem; background: rgba(3, 3, 5, 0.85);
+            backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);
+            border-bottom: 1px solid var(--border);
+        }
+
+        .brand-logo { display: flex; align-items: center; gap: 1rem; text-decoration: none; }
+        .brand-logo img {
+            width: 70px; height: 70px; border-radius: 12px; object-fit: cover;
+            border: none;
+            transition: transform 0.3s ease;
+        }
+        .brand-logo:hover img { transform: scale(1.05) rotate(5deg); }
+        .brand-text { display: flex; flex-direction: column; line-height: 1; }
+        .brand-name { font-family: 'Orbitron', sans-serif; font-weight: 900; font-size: 1.4rem; color: #fff; letter-spacing: 1px; }
+        .brand-sub { font-family: 'Rajdhani', sans-serif; font-weight: 700; font-size: 0.8rem; color: rgb(var(--theme-color)); letter-spacing: 3px; }
+
+        .nav-links a {
+            color: var(--text-muted); text-decoration: none; font-size: 0.9rem; font-weight: 600;
+            transition: color 0.3s ease, text-shadow 0.3s ease; text-transform: uppercase; letter-spacing: 1px;
+        }
+        .nav-links a:hover { color: #fff; text-shadow: 0 0 10px rgba(255,255,255,0.5); }
+
+        /* BUTTONS */
+        .btn-glow {
+            position: relative; background: transparent; color: #fff;
+            border: 1px solid rgb(var(--theme-color)); padding: 12px 32px;
+            font-family: 'Orbitron', sans-serif; font-weight: 700; font-size: 0.9rem;
+            border-radius: 30px; text-transform: uppercase; letter-spacing: 1px; cursor: pointer;
+            overflow: hidden; transition: all 0.3s ease;
+            box-shadow: inset 0 0 10px rgba(var(--theme-color), 0.2), 0 0 15px rgba(var(--theme-color), 0.2);
+        }
+        .btn-glow::before {
+            content: ''; position: absolute; top: 0; left: -100%; width: 100%; height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(var(--theme-color), 0.4), transparent);
+            transition: left 0.5s ease;
+        }
+        .btn-glow:hover {
+            background: rgba(var(--theme-color), 0.15); transform: translateY(-2px);
+            box-shadow: inset 0 0 20px rgba(var(--theme-color), 0.4), 0 0 30px rgba(var(--theme-color), 0.4);
+        }
+        .btn-glow:hover::before { left: 100%; }
+
+        .btn-solid {
+            background: rgb(var(--theme-color)); color: #fff; border: none; padding: 12px 32px;
+            font-family: 'Orbitron', sans-serif; font-weight: 700; font-size: 0.9rem;
+            border-radius: 30px; text-transform: uppercase; letter-spacing: 1px; cursor: pointer;
+            transition: all 0.3s ease; box-shadow: 0 0 20px rgba(var(--theme-color), 0.4);
+        }
+        .btn-solid:hover {
+            transform: translateY(-2px); box-shadow: 0 10px 30px rgba(var(--theme-color), 0.6); filter: brightness(1.2);
+        }
+
+        /* TEXT ANIMATIONS */
+        .animated-shimmer {
+            background: linear-gradient(135deg, #ffffff 0%, rgb(var(--theme-color)) 40%, #ffffff 80%);
+            background-size: 200% auto;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            animation: textShimmer 3s linear infinite;
+            display: inline-block;
+            font-weight: 900;
+        }
+        @keyframes textShimmer {
+            0% { background-position: 0% center; }
+            100% { background-position: 200% center; }
+        }
+
+        /* ORBS & BACKGROUND */
+        .orb {
+            position: fixed; border-radius: 50%; filter: blur(100px);
+            pointer-events: none; z-index: -3; opacity: 0.3;
+            animation: orb-float 15s ease-in-out infinite;
+        }
+        .orb-1 { width: 400px; height: 400px; top: -100px; left: -100px; background: rgba(var(--theme-color), 0.6); }
+        .orb-2 { width: 300px; height: 300px; bottom: -50px; right: -50px; background: rgba(var(--theme-color), 0.4); animation-delay: -5s; }
+        .orb-3 { width: 250px; height: 250px; top: 40%; left: 60%; background: rgba(var(--theme-color), 0.2); animation-delay: -10s; }
+        @keyframes orb-float {
+            0%, 100% { transform: translate(0, 0) scale(1); }
+            33% { transform: translate(50px, -50px) scale(1.1); }
+            66% { transform: translate(-30px, 30px) scale(0.9); }
+        }
+
+        /* CUSTOM CURSOR */
+        @media (min-width: 900px) {
+            * { cursor: none !important; }
+            .cursor-dot {
+                width: 8px; height: 8px; background: rgb(var(--theme-color)); border-radius: 50%;
+                position: fixed; pointer-events: none; z-index: 10000;
+                transform: translate(-50%, -50%) scale(1); box-shadow: 0 0 10px rgb(var(--theme-color));
+                transition: transform 0.2s, background 0.2s;
+            }
+            .cursor-outline {
+                width: 40px; height: 40px; border: 2px solid rgba(var(--theme-color), 0.5); border-radius: 50%;
+                position: fixed; pointer-events: none; z-index: 9999;
+                transform: translate(-50%, -50%); transition: opacity 0.2s;
+            }
+        }
+
+        /* DECORATIVE UI */
+        /* Removed - ui-cross elements */
+
+        /* HERO SECTION */
+        .hero {
+            min-height: 100vh; display: flex; align-items: center; justify-content: center;
+            padding: 0 2rem; position: relative;
+        }
+        .hero-content { text-align: center; max-width: 900px; z-index: 10; margin-top: 5rem; }
+        
+        .hero-badge {
+            display: inline-flex; align-items: center; gap: 8px; padding: 6px 16px;
+            background: rgba(var(--theme-color), 0.1); border: 1px solid rgba(var(--theme-color), 0.3);
+            border-radius: 50px; font-size: 0.75rem; font-weight: 700; color: #fff;
+            margin-bottom: 2rem; letter-spacing: 2px; text-transform: uppercase;
+            box-shadow: 0 0 20px rgba(var(--theme-color), 0.2);
+        }
+        .hero-badge::before {
+            content: ''; display: block; width: 6px; height: 6px; border-radius: 50%;
+            background: rgb(var(--theme-color)); box-shadow: 0 0 10px rgb(var(--theme-color));
+            animation: pulse 2s infinite;
+        }
+        @keyframes pulse { 0%, 100% { opacity: 1; transform: scale(1); } 50% { opacity: 0.5; transform: scale(1.5); } }
+
+        .hero-title {
+            font-size: clamp(3rem, 8vw, 6.5rem); line-height: 1; margin-bottom: 1.5rem; font-weight: 900;
+            text-transform: uppercase; position: relative;
+        }
+        .hero-title .outline { color: transparent; -webkit-text-stroke: 1px rgba(255,255,255,0.2); display: block; }
+        .hero-title .glow {
+            color: #fff; display: block; position: relative;
+            text-shadow: 0 0 20px rgba(var(--theme-color), 0.5), 0 0 40px rgba(var(--theme-color), 0.3);
+        }
+        
+        /* GLITCH */
+        .glitch-wrapper { position: relative; display: inline-block; }
+        .glitch-wrapper::before, .glitch-wrapper::after {
+            content: attr(data-text); position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            background: var(--bg-base); opacity: 0;
+        }
+        .glitch-wrapper:hover::before {
+            left: 2px; text-shadow: -2px 0 rgb(var(--theme-color)); animation: glitch-anim-1 2s infinite linear alternate-reverse; opacity: 1;
+        }
+        .glitch-wrapper:hover::after {
+            left: -2px; text-shadow: 2px 0 #fff; animation: glitch-anim-2 3s infinite linear alternate-reverse; opacity: 1;
+        }
+        @keyframes glitch-anim-1 {
+            0% { clip-path: inset(20% 0 80% 0); } 20% { clip-path: inset(60% 0 10% 0); }
+            40% { clip-path: inset(40% 0 50% 0); } 60% { clip-path: inset(80% 0 5% 0); }
+            80% { clip-path: inset(10% 0 70% 0); } 100% { clip-path: inset(30% 0 50% 0); }
+        }
+        @keyframes glitch-anim-2 {
+            0% { clip-path: inset(10% 0 60% 0); } 20% { clip-path: inset(80% 0 5% 0); }
+            40% { clip-path: inset(30% 0 20% 0); } 60% { clip-path: inset(70% 0 15% 0); }
+            80% { clip-path: inset(50% 0 30% 0); } 100% { clip-path: inset(5% 0 80% 0); }
+        }
+
+        .hero-desc {
+            font-size: 1.1rem; color: var(--text-muted); margin-bottom: 3rem; max-width: 600px; margin-inline: auto; font-weight: 400;
+        }
+
+        /* STATS */
+        .stats-wrapper {
+            display: flex; justify-content: center; gap: 4rem; margin-top: 4rem;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.02), transparent);
+            padding: 2rem; border-top: 1px solid var(--border); border-bottom: 1px solid var(--border);
+        }
+        .stat-box { display: flex; flex-direction: column; align-items: center; }
+        .stat-val { font-size: 2.8rem; font-family: 'Rajdhani', sans-serif; font-weight: 700; color: #fff; line-height: 1; text-shadow: 0 0 15px rgba(var(--theme-color), 0.4); }
+        .stat-lbl { font-size: 0.8rem; color: rgb(var(--theme-color)); text-transform: uppercase; letter-spacing: 2px; margin-top: 8px; font-weight: 700; }
+
+        /* HEADERS */
+        .section-header { text-align: center; margin-bottom: 4rem; margin-top: 2rem; }
+        .section-title { font-size: 3rem; font-weight: 900; text-transform: uppercase; display: inline-block; position: relative; }
+        .section-title span { color: rgb(var(--theme-color)); }
+        .section-subtitle { font-size: 1rem; color: var(--text-muted); font-family: 'Rajdhani', sans-serif; letter-spacing: 2px; text-transform: uppercase; margin-top: 0.5rem; }
+
+        /* BENTO GRID (SPOTLIGHT) */
+        .bento-container {
+            display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 1.5rem;
+            max-width: 1200px; margin: 0 auto;
+        }
+        .bento-card {
+            background: var(--surface); border: 1px solid var(--border);
+            border-radius: 16px; padding: 2.5rem; position: relative; overflow: hidden;
+            display: flex; flex-direction: column; transition: transform 0.3s ease;
+        }
+        .bento-card:hover { transform: translateY(-5px); }
+        .bento-large { grid-column: span 2; }
+        
+        .bento-card::before {
+            content: ""; position: absolute; top: 0; left: 0; right: 0; bottom: 0; border-radius: 16px; padding: 2px;
+            background: radial-gradient(600px circle at var(--mouse-x, 0) var(--mouse-y, 0), rgba(var(--theme-color), 0.5), transparent 40%);
+            -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+            -webkit-mask-composite: xor; mask-composite: exclude;
+            opacity: 0; transition: opacity 0.3s; pointer-events: none; z-index: 10;
+        }
+        .bento-card:hover::before { opacity: 1; }
+
+        .bento-icon {
+            width: 55px; height: 55px; border-radius: 14px;
+            background: rgba(var(--theme-color), 0.1); border: 1px solid rgba(var(--theme-color), 0.2);
+            display: flex; align-items: center; justify-content: center;
+            color: rgb(var(--theme-color)); margin-bottom: 1.5rem;
+            box-shadow: inset 0 0 15px rgba(var(--theme-color), 0.2);
+        }
+        .bento-title { font-size: 1.3rem; font-weight: 700; color: #fff; margin-bottom: 1rem; font-family: 'Orbitron', sans-serif; letter-spacing: 1px; }
+        .bento-desc { color: var(--text-muted); font-size: 0.95rem; line-height: 1.6; }
+
+        /* TABS UI */
+        .product-tabs {
+            display: flex; justify-content: center; gap: 1rem; margin-bottom: 3rem; flex-wrap: wrap;
+        }
+        .tab-btn {
+            display: flex; align-items: center; justify-content: center; gap: 10px;
+            padding: 12px 28px; border-radius: 30px;
+            background: rgba(15,15,20,0.8); border: 1px solid rgba(255,255,255,0.05);
+            color: var(--text-muted); font-family: 'Orbitron', sans-serif; font-size: 0.95rem; font-weight: 700;
+            cursor: pointer; transition: all 0.3s ease; text-transform: uppercase; letter-spacing: 1px;
+        }
+        .tab-btn:hover { background: rgba(var(--theme-color), 0.1); border-color: rgba(var(--theme-color), 0.3); color: #fff; }
+        .tab-btn.active {
+            background: rgba(var(--theme-color), 0.15); border-color: rgb(var(--theme-color)); color: #fff;
+            box-shadow: 0 0 20px rgba(var(--theme-color), 0.3), inset 0 0 10px rgba(var(--theme-color), 0.2);
+        }
+        .tab-icon { width: 20px; height: 20px; }
+
+        /* PRODUCT CARDS (TILT) */
+        .products-grid {
+            display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 2rem;
+            max-width: 1200px; margin: 0 auto; perspective: 1500px;
+        }
+        .product-card {
+            background: var(--surface); border: 1px solid var(--border);
+            border-radius: 16px; padding: 2.5rem 2rem; position: relative;
+            transform-style: preserve-3d; transition: border-color 0.3s ease, box-shadow 0.3s ease;
+            display: flex; flex-direction: column; height: 100%;
+        }
+        .product-card:hover {
+            border-color: rgba(var(--theme-color), 0.4);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.6), 0 0 30px rgba(var(--theme-color), 0.15);
+        }
+        
+        .product-header { margin-bottom: 1.5rem; transform: translateZ(30px); }
+        .product-title { font-size: 1.5rem; font-weight: 800; color: #fff; display: flex; align-items: center; gap: 10px; font-family: 'Orbitron', sans-serif; letter-spacing: 1px; }
+        .product-title::before {
+            content: ''; display: block; width: 14px; height: 4px; background: rgb(var(--theme-color));
+            box-shadow: 0 0 10px rgb(var(--theme-color));
+        }
+
+        .feature-cat { font-family: 'Rajdhani', sans-serif; font-size: 0.85rem; color: rgb(var(--theme-color)); font-weight: 700; letter-spacing: 2px; margin-top: 1.5rem; margin-bottom: 0.5rem; transform: translateZ(20px); text-transform: uppercase; }
+        
+        .feature-list { list-style: none; flex-grow: 1; transform: translateZ(20px); }
+        .feature-list li {
+            padding: 8px 0; font-size: 0.85rem; color: #ccc; display: flex; align-items: center; gap: 12px;
+            border-bottom: 1px solid rgba(255,255,255,0.02); font-weight: 500;
+        }
+        .feature-list li::before {
+            content: ''; display: block; width: 6px; height: 6px; border-radius: 50%;
+            background: rgb(var(--theme-color)); box-shadow: 0 0 8px rgb(var(--theme-color));
+        }
+
+        .pricing-table {
+            background: rgba(0,0,0,0.6); border-radius: 8px; padding: 1.2rem;
+            margin-top: 2rem; margin-bottom: 1.5rem; border: 1px solid rgba(255,255,255,0.03);
+            transform: translateZ(30px);
+        }
+        .price-row { display: flex; justify-content: space-between; padding: 5px 0; font-size: 0.85rem; align-items: center; }
+        .p-dur { color: var(--text-muted); font-family: 'Rajdhani', sans-serif; font-weight: 700; font-size: 0.95rem; text-transform: uppercase; letter-spacing: 1px; }
+        .p-amt { color: #fff; font-weight: 700; font-family: 'Inter', sans-serif; }
+
+        .btn-buy {
+            width: 100%; padding: 14px; background: rgba(var(--theme-color), 0.1);
+            border: 1px solid rgba(var(--theme-color), 0.4); color: #fff;
+            border-radius: 30px; font-family: 'Orbitron', sans-serif; font-weight: 700;
+            text-transform: uppercase; cursor: pointer; transition: all 0.3s;
+            transform: translateZ(40px); letter-spacing: 1px;
+        }
+        .product-card:hover .btn-buy { background: rgb(var(--theme-color)); box-shadow: 0 0 20px rgba(var(--theme-color), 0.5); }
+
+        /* CLOSED MODIFIER */
+        .product-card.closed { overflow: hidden; border-color: rgba(255,255,255,0.05); }
+        .product-card.closed::after {
+            content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(5,5,5,0.7); backdrop-filter: grayscale(1) blur(2px); border-radius: 16px; z-index: 5;
+            pointer-events: none;
+        }
+        .closed-badge {
+            position: absolute; top: 25px; right: -40px; background: #e63946; color: #fff;
+            font-family: 'Orbitron', sans-serif; font-size: 0.8rem; font-weight: 800;
+            padding: 8px 45px; transform: rotate(45deg); z-index: 10; letter-spacing: 3px;
+            box-shadow: 0 0 25px rgba(230, 57, 70, 0.6);
+        }
+
+        /* CUSTOM BANNER */
+        .custom-banner {
+            background: linear-gradient(135deg, rgba(var(--theme-color), 0.15) 0%, rgba(5,5,5,1) 100%);
+            border: 1px solid rgba(var(--theme-color), 0.3);
+            border-radius: 20px; padding: 4rem 2rem; text-align: center; max-width: 900px; margin: 0 auto;
+            position: relative; overflow: hidden; box-shadow: 0 20px 40px rgba(0,0,0,0.5);
+            transition: border-color 0.3s ease, box-shadow 0.3s ease;
+        }
+        .custom-banner:hover {
+            border-color: rgba(var(--theme-color), 0.4);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.6), 0 0 30px rgba(var(--theme-color), 0.15);
+        }
+        .custom-banner::before {
+            content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            background: url('data:image/svg+xml;utf8,%3Csvg viewBox=%220 0 200 200%22 xmlns=%22http://www.w3.org/2000/svg%22%3E%3Cfilter id=%22noiseFilter%22%3E%3CfeTurbulence type=%22fractalNoise%22 baseFrequency=%220.65%22 numOctaves=%223%22 stitchTiles=%22stitch%22/%3E%3C/filter%3E%3Crect width=%22100%25%22 height=%22100%25%22 filter=%22url(%23noiseFilter)%22/%3E%3C/svg%3E');
+            opacity: 0.05; mix-blend-mode: overlay; pointer-events: none;
+        }
+        .custom-banner > * { position: relative; z-index: 2; }
+
+        /* CONTACT SUPPORT SECTION */
+        .contact-section {
+            padding: 5rem 2rem;
             position: relative;
-            z-index: 2;
         }
 
-        .logo-wrapper, .hero-logo, .about-logo {
+        .contact-header {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+
+        .contact-title {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 2.5rem;
+            font-weight: 900;
+            text-transform: uppercase;
+            margin-bottom: 1rem;
+            background: linear-gradient(135deg, #fff 0%, rgb(var(--theme-color)) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .contact-subtitle {
+            color: var(--text-muted);
+            font-size: 1rem;
+            max-width: 500px;
+            margin: 0 auto;
+            line-height: 1.6;
+        }
+
+        .sellers-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.5rem;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .seller-card {
+            background: linear-gradient(145deg, rgba(15, 15, 20, 0.9), rgba(8, 8, 12, 0.95));
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            padding: 2rem;
+            position: relative;
+            overflow: hidden;
+            transition: border-color 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .seller-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            border-radius: 20px;
+            padding: 1px;
+            background: linear-gradient(135deg, rgba(var(--theme-color), 0.4), transparent 50%, rgba(var(--theme-color), 0.1));
+            -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+            -webkit-mask-composite: xor;
+            mask-composite: exclude;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            pointer-events: none;
+        }
+
+        .seller-card:hover {
+            border-color: rgba(var(--theme-color), 0.4);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.6), 0 0 30px rgba(var(--theme-color), 0.15);
+        }
+
+        .seller-card:hover::before {
+            opacity: 1;
+        }
+
+        .official-badge {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            background: linear-gradient(135deg, rgba(var(--theme-color), 0.3), rgba(var(--theme-color), 0.1));
+            border: 1px solid rgba(var(--theme-color), 0.5);
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-family: 'Orbitron', sans-serif;
+            font-size: 0.65rem;
+            font-weight: 700;
+            color: #fff;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+        }
+
+        .seller-profile {
             display: flex;
             align-items: center;
-            justify-content: center;
-            overflow: hidden;
-            background: #0a1428;
-            border-radius: 18px;
-            border: 1px solid #2c7aff40;
+            gap: 1.2rem;
+            margin-bottom: 1.5rem;
         }
-        .logo-wrapper { width: 48px; height: 48px; }
-        .hero-logo { width: 112px; height: 112px; border-radius: 28px; background: linear-gradient(135deg, #0a1428, #030714); }
-        .about-logo { width: 48px; height: 48px; border-radius: 14px; background: #0f1a2c; }
-        .logo-wrapper img, .hero-logo img, .about-logo img {
-            width: 100%;
-            height: 100%;
+
+        .seller-avatar {
+            width: 70px;
+            height: 70px;
+            border-radius: 16px;
             object-fit: cover;
+            border: none;
+            transition: all 0.3s ease;
         }
 
-        /* Enhanced badge style - elegant with subtle glow */
-        .badge-modern {
-            display: inline-block;
-            padding: 0.35rem 1.2rem;
-            font-size: 0.7rem;
-            font-weight: 600;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            background: rgba(0, 102, 255, 0.12);
-            backdrop-filter: blur(4px);
-            border: 1px solid rgba(0, 102, 255, 0.4);
-            border-radius: 40px;
-            color: #a0c4ff;
-            transition: all 0.2s;
-            box-shadow: 0 0 8px rgba(0, 102, 255, 0.2);
-        }
-        .badge-modern:hover {
-            border-color: #2c7aff;
-            color: #cce4ff;
-            box-shadow: 0 0 12px rgba(0, 102, 255, 0.4);
+        .seller-card:hover .seller-avatar {
+            transform: scale(1.05) rotate(3deg);
+            box-shadow: none;
         }
 
-        .feature-list {
-            margin: 0.75rem 0;
-            font-size: 0.7rem;
-            line-height: 1.3;
-            color: #b9c7e6;
-            max-height: 140px;
-            overflow-y: auto;
-            padding-right: 4px;
+        .seller-info {
             flex: 1;
         }
 
-        .feature-list ul {
-            list-style: none;
-            padding-left: 0;
+        .seller-name {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.2rem;
+            font-weight: 800;
+            color: #fff;
+            margin-bottom: 0.3rem;
+            letter-spacing: 1px;
         }
 
-        .feature-list li {
-            position: relative;
-            padding-left: 12px;
-            margin-bottom: 4px;
+        .seller-role {
+            font-family: 'Rajdhani', sans-serif;
+            font-size: 0.85rem;
+            color: rgb(var(--theme-color));
+            font-weight: 600;
+            letter-spacing: 2px;
+            text-transform: uppercase;
         }
 
-        .feature-list li::before {
-            content: "•";
-            position: absolute;
-            left: 0;
-            color: #60a5fa;
+        .seller-socials {
+            display: flex;
+            gap: 1rem;
+            margin-top: 1rem;
         }
 
-        .feature-list::-webkit-scrollbar {
-            width: 3px;
-        }
-        .feature-list::-webkit-scrollbar-track {
-            background: #1e293b;
-            border-radius: 10px;
-        }
-        .feature-list::-webkit-scrollbar-thumb {
-            background: #2c7aff;
-            border-radius: 10px;
+        .social-btn {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            padding: 14px 20px;
+            border-radius: 12px;
+            font-family: 'Orbitron', sans-serif;
+            font-size: 0.8rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            border: none;
         }
 
-        .price-container {
-            margin-top: auto;
+        .social-btn svg {
+            width: 20px;
+            height: 20px;
+            transition: transform 0.3s ease;
+        }
+
+        .social-btn:hover svg {
+            transform: scale(1.2);
+        }
+
+        .btn-tiktok {
+            background: linear-gradient(135deg, #000000, #1a1a1a);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            color: #fff;
+        }
+
+        .btn-tiktok:hover {
+            background: linear-gradient(135deg, #1a1a1a, #2d2d2d);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.4), 0 0 20px rgba(254, 44, 85, 0.3);
+            transform: translateY(-3px);
+        }
+
+        .btn-whatsapp {
+            background: linear-gradient(135deg, #128C7E, #075E54);
+            border: 1px solid rgba(37, 211, 102, 0.3);
+            color: #fff;
+        }
+
+        .btn-whatsapp:hover {
+            background: linear-gradient(135deg, #25D366, #128C7E);
+            box-shadow: 0 8px 25px rgba(37, 211, 102, 0.4);
+            transform: translateY(-3px);
+        }
+
+        .status-indicator {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-top: 1.5rem;
+            padding-top: 1.5rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .status-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: #22c55e;
+            box-shadow: 0 0 10px rgba(34, 197, 94, 0.6);
+            animation: status-pulse 2s infinite;
+        }
+
+        @keyframes status-pulse {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.6; transform: scale(1.2); }
+        }
+
+        .status-text {
+            font-family: 'Rajdhani', sans-serif;
+            font-size: 0.9rem;
+            color: #22c55e;
+            font-weight: 600;
+            letter-spacing: 1px;
+        }
+
+        /* AVATAR PLACEHOLDER */
+        .avatar-placeholder {
+            width: 70px;
+            height: 70px;
+            border-radius: 16px;
+            background: linear-gradient(135deg, rgba(var(--theme-color), 0.3), rgba(var(--theme-color), 0.1));
+            border: 2px solid rgba(var(--theme-color), 0.4);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.5rem;
+            font-weight: 900;
+            color: rgb(var(--theme-color));
+        }
+
+        /* FOOTER */
+        footer {
+            border-top: 1px solid var(--border); padding: 4rem 2rem 2rem;
+            text-align: center; margin-top: 6rem; background: #020202;
+        }
+
+        /* ANIMATIONS */
+        .reveal { opacity: 0; transform: translateY(40px); transition: all 0.8s cubic-bezier(0.16, 1, 0.3, 1); }
+        .reveal.active { opacity: 1; transform: translateY(0); }
+        .delay-1 { transition-delay: 0.1s; } .delay-2 { transition-delay: 0.2s; } .delay-3 { transition-delay: 0.3s; }
+
+        @media (max-width: 900px) {
+            .bento-large { grid-column: span 1; }
+            .stats-wrapper { flex-direction: column; gap: 2rem; text-align: center; }
+            .nav-links { display: none; }
+            .hero-title { font-size: 3.5rem; }
+            .product-card { transform: none !important; }
+            .sellers-grid { grid-template-columns: 1fr; }
+            .contact-title { font-size: 1.8rem; }
+        }
+
+        /* DESKTOP SCALING */
+        @media (min-width: 1024px) {
+            html { font-size: 18px; }
+            .hero-title { font-size: 6.5rem; }
+            .hero-desc { font-size: 1.25rem; max-width: 800px; margin: 0 auto; }
+            .brand-name { font-size: 1.8rem; }
+            .nav-links a { font-size: 1.1rem; }
+            .btn-glow, .btn-solid { font-size: 1.1rem; padding: 16px 40px; }
+            .bento-container { grid-template-columns: repeat(auto-fit, minmax(360px, 1fr)); max-width: 1200px; }
+            .products-grid { grid-template-columns: repeat(auto-fit, minmax(340px, 1fr)); max-width: 1200px; }
+            .bento-title { font-size: 1.6rem; }
+            .bento-desc { font-size: 1.1rem; }
+            .stat-val { font-size: 4rem; }
+            .stat-lbl { font-size: 1.2rem; }
+            .section-title { font-size: 3.5rem; }
+            .sellers-grid { grid-template-columns: repeat(auto-fit, minmax(340px, 1fr)); }
+        }
+        @media (min-width: 1440px) {
+            html { font-size: 20px; }
+            .products-grid { grid-template-columns: repeat(auto-fit, minmax(380px, 1fr)); max-width: 1400px; }
+            .bento-container { grid-template-columns: repeat(auto-fit, minmax(380px, 1fr)); max-width: 1400px; }
+            .hero-title { font-size: 8rem; }
+            .hero-desc { font-size: 1.4rem; max-width: 900px; }
         }
     </style>
 </head>
-<body>
+<body style="overflow: hidden;">
 
-<div class="bg-soft"></div>
-
-<nav class="glass-nav fixed top-0 left-0 w-full z-50">
-    <div class="max-w-6xl mx-auto px-5 py-3 flex items-center justify-between">
-        <div class="flex items-center gap-3">
-            <div class="logo-wrapper">
-                <img src="logo.png" alt="MARVINX" onerror="this.parentElement.innerHTML='<span class=\'text-blue-400 font-bold text-xl\'>MX</span>'">
+    <!-- PRELOADER -->
+    <div id="preloader">
+        <div class="loader-content">
+            <img src="logo.png" alt="Logo" class="loader-logo" onerror="this.src='data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI4MCIgaGVpZ2h0PSI4MCI+PHJlY3Qgd2lkdGg9IjEwMCUiIGhlaWdodD0iMTAwJSIgZmlsbD0iIzIyMiIvPjx0ZXh0IHg9IjUwJSIgeT0iNTAlIiBmb250LWZhbWlseT0iQXJpYWwiIGZvbnQtc2l6ZT0iMjQiIGZpbGw9IiNmZmYiIGR5PSIuM2VtIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIj5NWDwvdGV4dD48L3N2Zz4='">
+            <div class="loader-bar-container">
+                <div class="loader-bar"></div>
             </div>
-            <span class="font-display font-bold text-xl tracking-tight">
-                <span class="text-white">MARVINX</span>
-                <span class="text-blue-500">TEAM</span>
-            </span>
-        </div>
-        <div class="hidden md:flex gap-6 text-sm font-medium">
-            <a href="#about" class="hover:text-blue-400 transition">About</a>
-            <a href="#products" class="hover:text-blue-400 transition">Products</a>
-            <a href="#custom" class="hover:text-blue-400 transition">Custom Panel</a>
-            <a href="#contact" class="hover:text-blue-400 transition">Contact</a>
-        </div>
-        <button class="btn-primary text-sm py-2 px-5" onclick="document.getElementById('products').scrollIntoView({behavior:'smooth'})">Pesan</button>
-    </div>
-</nav>
-
-<!-- Hero Section -->
-<section class="min-h-screen flex items-center justify-center relative pt-20 px-5" id="hero">
-    <div class="max-w-5xl mx-auto text-center">
-        <div class="flex justify-center mb-6 reveal">
-            <div class="hero-logo">
-                <img src="logo.png" alt="Cheat FreeFire" onerror="this.style.display='none'; this.parentElement.innerHTML='<span class=\'text-blue-400 text-3xl font-bold\'>MX</span>'">
-            </div>
-        </div>
-        
-        <h1 class="font-display text-5xl md:text-7xl font-black leading-tight reveal">
-            <span class="text-white">FREEFIRE</span><br>
-            <span class="bg-gradient-to-r from-blue-400 to-blue-600 bg-clip-text text-transparent">CHEAT PREMIUM</span>
-        </h1>
-        <p class="text-gray-300 text-lg md:text-xl max-w-2xl mx-auto mt-5 reveal reveal-delay-1">
-            Aimbot • ESP • Wallhack • Sistem anti-detect. Dipercaya oleh 200+ pemain FreeFire.
-        </p>
-        <div class="flex flex-wrap justify-center gap-4 mt-8 reveal reveal-delay-2">
-            <button onclick="document.getElementById('products').scrollIntoView({behavior:'smooth'})" class="btn-primary px-8 py-3 text-base">Pesan Sekarang</button>
-            <button onclick="document.getElementById('about').scrollIntoView({behavior:'smooth'})" class="btn-outline px-7 py-3">Tentang Kami</button>
-        </div>
-
-        <div class="grid grid-cols-3 gap-4 max-w-md mx-auto mt-16 reveal reveal-delay-3">
-            <div><div class="text-2xl md:text-3xl font-bold text-blue-400">200+</div><div class="text-gray-400 text-xs">User Aktif</div></div>
-            <div><div class="text-2xl md:text-3xl font-bold text-blue-400">99%</div><div class="text-gray-400 text-xs">Uptime</div></div>
-            <div><div class="text-2xl md:text-3xl font-bold text-blue-400">24/7</div><div class="text-gray-400 text-xs">Dukungan</div></div>
+            <div class="loader-text">INITIALIZING SYSTEM...</div>
         </div>
     </div>
-</section>
 
-<!-- About Section - English title, Indonesian content -->
-<section class="py-20 px-5 container-relative" id="about">
-    <div class="max-w-5xl mx-auto">
-        <div class="text-center mb-12">
-            <div class="badge-modern mx-auto mb-3">MARVINX TEAM</div>
-            <h2 class="font-display text-3xl md:text-5xl font-bold"><span class="text-white">ABOUT </span><span class="text-blue-500">US</span></h2>
-            <p class="text-gray-400 mt-3 max-w-xl mx-auto">Spesialis cheat FreeFire dengan teknologi anti-detect.</p>
-        </div>
+    <div class="ambient-glow"></div>
+    <div class="noise-overlay"></div>
+    <div class="cyber-grid"></div>
 
-        <div class="bg-[#0a0f1c]/80 border border-blue-900/30 rounded-3xl p-6 md:p-9 backdrop-blur-sm reveal">
-            <div class="grid md:grid-cols-2 gap-8">
-                <div>
-                    <div class="flex items-center gap-3 mb-4">
-                        <div class="about-logo">
-                            <img src="logo.png" alt="logo" onerror="this.style.display='none'; this.parentElement.innerHTML='<span class=\'text-blue-400 font-bold\'>MX</span>'">
-                        </div>
-                        <h3 class="font-display text-xl font-bold text-white">Spesialis Cheat FreeFire</h3>
-                    </div>
-                    <p class="text-gray-300 leading-relaxed">
-                        MARVINX TEAM fokus 100% pada cheat FreeFire (Garena). Kami menyediakan aimbot, ESP, wallhack, dan sistem keamanan agar akun Anda tetap aman. Dipercaya oleh ratusan pemain di Indonesia.
-                    </p>
-                    <div class="mt-6 space-y-3">
-                        <div class="flex gap-3 items-start"><div class="w-5 h-5 rounded-full bg-blue-500/30 flex items-center justify-center mt-0.5">✓</div><span class="text-gray-300">Undetected sejak 2025</span></div>
-                        <div class="flex gap-3 items-start"><div class="w-5 h-5 rounded-full bg-blue-500/30 flex items-center justify-center mt-0.5">✓</div><span class="text-gray-300">Auto-injector & mode manual</span></div>
-                        <div class="flex gap-3 items-start"><div class="w-5 h-5 rounded-full bg-blue-500/30 flex items-center justify-center mt-0.5">✓</div><span class="text-gray-300">Support All Emulator</span></div>
-                    </div>
+    <!-- ORBS -->
+    <div class="orb orb-1"></div>
+    <div class="orb orb-2"></div>
+    <div class="orb orb-3"></div>
+
+    <nav class="navbar" id="navbar">
+        <div class="max-w-7xl mx-auto flex justify-between items-center w-full">
+            <a href="#" class="brand-logo">
+                <img src="logo.png" alt="Logo" id="mainLogo" onerror="this.src='data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI0NSIgaGVpZ2h0PSI0NSI+PHJlY3Qgd2lkdGg9IjEwMCUiIGhlaWdodD0iMTAwJSIgZmlsbD0iIzIyMiIvPjx0ZXh0IHg9IjUwJSIgeT0iNTAlIiBmb250LWZhbWlseT0iQXJpYWwiIGZvbnQtc2l6ZT0iMTgiIGZpbGw9IiNmZmYiIGR5PSIuM2VtIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIj5NWDwvdGV4dD48L3N2Zz4='">
+                <div class="brand-text">
+                    <span class="brand-name">MARVINX</span>
+                    <span class="brand-sub">TEAM PROJECT</span>
                 </div>
-                <div>
-                    <div class="space-y-4">
-                        <div class="bg-black/30 p-4 rounded-xl border-l-4 border-blue-500">
-                            <h4 class="font-bold text-blue-300">Sistem Keamanan</h4>
-                            <p class="text-sm text-gray-400">Enkripsi runtime dan proteksi memori untuk menghindari deteksi anti-cheat FreeFire.</p>
-                        </div>
-                        <div class="bg-black/30 p-4 rounded-xl border-l-4 border-blue-500">
-                            <h4 class="font-bold text-blue-300">Update Rutin</h4>
-                            <p class="text-sm text-gray-400">Respon cepat terhadap patch Garena, menjaga stabilitas cheat.</p>
-                        </div>
-                        <div class="bg-black/30 p-4 rounded-xl border-l-4 border-blue-500">
-                            <h4 class="font-bold text-blue-300">Dukungan 24/7</h4>
-                            <p class="text-sm text-gray-400">Bantuan instalasi, konfigurasi, dan kebijakan refund.</p>
-                        </div>
-                    </div>
+            </a>
+            <div class="nav-links hidden md:flex gap-8">
+                <a href="#about">About</a>
+                <a href="#products">Products</a>
+                <a href="#contact">Contact</a>
+            </div>
+            <div class="flex items-center gap-4">
+                <div class="hidden sm:flex items-center gap-2 px-3 py-1.5 rounded-full border border-green-500/30 bg-green-500/10 text-green-400 font-bold text-xs tracking-widest" style="font-family: 'Orbitron', sans-serif;">
+                    <span class="relative flex h-2 w-2">
+                      <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
+                      <span class="relative inline-flex rounded-full h-2 w-2 bg-green-500"></span>
+                    </span>
+                    ONLINE
+                </div>
+                <button class="btn-solid hidden sm:block" onclick="document.getElementById('products').scrollIntoView()">ORDER NOW</button>
+            </div>
+        </div>
+    </nav>
+
+    <section class="hero" id="hero">
+        <div class="hero-content">
+            <h1 class="hero-title reveal delay-1">
+                <span class="animated-shimmer">MARVINX</span>
+                <span class="animated-shimmer" style="animation-delay: -1.5s;">TEAM</span>
+            </h1>
+            <div class="flex flex-wrap justify-center gap-6 mt-8 reveal delay-2">
+                <button class="btn-solid" onclick="document.getElementById('products').scrollIntoView()">LIHAT PAKET</button>
+                <button class="btn-glow" onclick="window.open('https://discord.gg/tKbWd4QAQe', '_blank')">GABUNG DISCORD</button>
+            </div>
+
+            <div class="stats-wrapper reveal delay-3">
+                <div class="stat-box">
+                    <span class="stat-val stat-counter" data-target="200">0</span>
+                    <span class="stat-lbl">User Aktif</span>
+                </div>
+                <div class="stat-box">
+                    <span class="stat-val stat-counter" data-target="99">0</span>
+                    <span class="stat-lbl">Uptime (%)</span>
+                </div>
+                <div class="stat-box">
+                    <span class="stat-val stat-counter" data-target="24/7">0</span>
+                    <span class="stat-lbl">Support</span>
                 </div>
             </div>
         </div>
-    </div>
-</section>
+    </section>
 
-<!-- Products Section - English title, Indonesian content -->
-<section class="py-20 px-5 container-relative" id="products">
-    <div class="max-w-7xl mx-auto">
-        <div class="text-center mb-12">
-            <div class="badge-modern mx-auto mb-2">CHEAT PACKAGES</div>
-            <h2 class="font-display text-3xl md:text-5xl font-bold"><span class="text-white">OUR </span><span class="text-blue-500">PRODUCTS</span></h2>
-            <p class="text-gray-400 mt-2">Pilih paket cheat sesuai kebutuhan — semuanya undetected</p>
+    <section class="py-24 px-5" id="about">
+        <div class="max-w-7xl mx-auto">
+            <div class="section-header reveal">
+                <h2 class="section-title"><span>ABOUT</span> SYSTEM</h2>
+            </div>
+
+            <div class="bento-container" id="bento-cards">
+                <div class="bento-card bento-large reveal">
+                    <div class="bento-icon">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-8 h-8"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75m-3-7.036A11.959 11.959 0 013.598 6 11.99 11.99 0 003 9.749c0 5.592 3.824 10.29 9 11.623 5.176-1.332 9-6.03 9-11.622 0-1.31-.21-2.571-.598-3.751h-.152c-3.196 0-6.1-1.248-8.25-3.285z" /></svg>
+                    </div>
+                    <h3 class="bento-title">Sistem Keamanan</h3>
+                    <p class="bento-desc">MARVINX TEAM fokus 100% pada keamanan dan kenyamanan bermain. Kami menggunakan teknologi enkripsi runtime dan bypass tingkat lanjut untuk memastikan panel tetap aman dan stabil sejak 2025 dengan update rutin merespon setiap patch baru.</p>
+                </div>
+
+                <div class="bento-card reveal delay-1">
+                    <div class="bento-icon">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-8 h-8"><path stroke-linecap="round" stroke-linejoin="round" d="M15.042 21.672L13.684 16.6m0 0l-2.51 2.225.569-9.47 5.227 7.917-3.286-.672zM12 2.25V4.5m5.834.166l-1.591 1.591M20.25 10.5H18M7.757 14.743l-1.59 1.59M6 10.5H3.75m4.007-4.243l-1.59-1.59" /></svg>
+                    </div>
+                    <h3 class="bento-title">Auto-Injector</h3>
+                    <p class="bento-desc">Proses instalasi mudah dengan auto-injector. Tersedia juga mode manual untuk pengguna expert.</p>
+                </div>
+
+                <div class="bento-card reveal">
+                    <div class="bento-icon">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-8 h-8"><path stroke-linecap="round" stroke-linejoin="round" d="M9 17.25v1.007a3 3 0 01-.879 2.122L7.5 21h9l-.621-.621A3 3 0 0115 18.257V17.25m6-12V15a2.25 2.25 0 01-2.25 2.25H5.25A2.25 2.25 0 013 15V5.25m18 0A2.25 2.25 0 0018.75 3H5.25A2.25 2.25 0 003 5.25m18 0V12a2.25 2.25 0 01-2.25 2.25H5.25A2.25 2.25 0 013 12V5.25" /></svg>
+                    </div>
+                    <h3 class="bento-title">All Emulator Support</h3>
+                    <p class="bento-desc">Mendukung penuh berbagai emulator populer seperti BlueStacks, MSI App Player, dan lainnya tanpa kendala FPS drop.</p>
+                </div>
+
+                <div class="bento-card bento-large reveal delay-1">
+                    <div class="bento-icon">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-8 h-8"><path stroke-linecap="round" stroke-linejoin="round" d="M12 20.25c4.97 0 9-3.694 9-8.25s-4.03-8.25-9-8.25S3 7.436 3 11.996c0 2.29.98 4.414 2.628 6.002.5.48.911 1.05 1.25 1.688a2.65 2.65 0 00.32 1.34c.14.25.4.4.69.4.5 0 .84-.42.74-.9-.1-.48-.2-1.01-.2-1.57 0-.58.3-1.14.8-1.46.4-.3.9-.4 1.4-.4h.5z" /></svg>
+                    </div>
+                    <h3 class="bento-title">Dukungan 24/7</h3>
+                    <p class="bento-desc">Tim kami selalu siap membantu masalah instalasi, konfigurasi panel, hingga memberikan saran setting aimbot terbaik. Garansi refund sesuai kebijakan berlaku.</p>
+                </div>
+            </div>
         </div>
+    </section>
 
-        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-            
-            <!-- STREAMER V1 -->
-            <div class="card p-5 reveal">
-                <h3 class="font-display font-bold text-xl text-blue-300 mb-1">STREAMER V1</h3>
-                <div class="feature-list">
-                    <ul>
+    <section class="py-24 px-5" id="products">
+        <div class="max-w-7xl mx-auto">
+            <div class="section-header reveal">
+                <h2 class="section-title">OUR <span>PRODUCTS</span></h2>
+            </div>
+
+            <!-- TABS UI -->
+            <div class="product-tabs reveal delay-1">
+                <button class="tab-btn active" data-tab="streamer" onclick="switchTab('streamer')">
+                    <svg class="tab-icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M9 17.25v1.007a3 3 0 01-.879 2.122L7.5 21h9l-.621-.621A3 3 0 0115 18.257V17.25m6-12V15a2.25 2.25 0 01-2.25 2.25H5.25A2.25 2.25 0 013 15V5.25m18 0A2.25 2.25 0 0018.75 3H5.25A2.25 2.25 0 003 5.25m18 0V12a2.25 2.25 0 01-2.25 2.25H5.25A2.25 2.25 0 013 12V5.25" /></svg>
+                    STREAMER PANEL
+                </button>
+                <button class="tab-btn" data-tab="other" onclick="switchTab('other')">
+                    <svg class="tab-icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M10.5 6h9.75M10.5 6a1.5 1.5 0 11-3 0m3 0a1.5 1.5 0 10-3 0M3.75 6H7.5m3 12h9.75m-9.75 0a1.5 1.5 0 01-3 0m3 0a1.5 1.5 0 00-3 0m-3.75 0H7.5m9-6h3.75m-3.75 0a1.5 1.5 0 01-3 0m3 0a1.5 1.5 0 00-3 0m-9.75 0h9.75" /></svg>
+                    OTHER PANEL
+                </button>
+            </div>
+
+            <div class="products-grid">
+                <!-- STREAMER V1 -->
+                <div class="product-card reveal tilt-card" data-category="streamer">
+                    <div class="product-header">
+                        <h3 class="product-title">STREAMER V1</h3>
+                    </div>
+                    <ul class="feature-list">
                         <li>AIMBOT HEAD</li>
-                        <li>AIMBOT DRAG</li>
+                        <li>AIMBOT DRAG LITE</li>
                         <li>AIMBOT DRAG PRO</li>
                         <li>ESP MENU</li>
-                        <li>TRACE CLEANER</li>
-                        <li>AUTO STARTUP</li>
+                        <li>SMART TRACE CLEANER</li>
+                        <li>BYPASS PC CHECKING TOOLS</li>
+                        <li>AUTO STARTUP (TOGGLE)</li>
                     </ul>
+                    <div class="pricing-table">
+                        <div class="price-row"><span class="p-dur">1 Hari</span><span class="p-amt">Rp 15.000</span></div>
+                        <div class="price-row"><span class="p-dur">3 Hari</span><span class="p-amt">Rp 30.000</span></div>
+                        <div class="price-row"><span class="p-dur">7 Hari</span><span class="p-amt">Rp 50.000</span></div>
+                        <div class="price-row"><span class="p-dur">30 Hari</span><span class="p-amt">Rp 130.000</span></div>
+                        <div class="price-row" style="border-top: 1px solid rgba(255,255,255,0.1); margin-top: 4px; padding-top: 8px;"><span class="p-dur" style="color:rgb(var(--theme-color))">Lifetime</span><span class="p-amt">Rp 380.000</span></div>
+                    </div>
+                    <button class="btn-buy" onclick="orderProduct()">PESAN SEKARANG</button>
                 </div>
-                <div class="price-container">
-                    <div class="price-row"><span class="price-duration">1 Hari</span><span class="price-value">Rp 10.000</span></div>
-                    <div class="price-row"><span class="price-duration">3 Hari</span><span class="price-value">Rp 20.000</span></div>
-                    <div class="price-row"><span class="price-duration">7 Hari</span><span class="price-value">Rp 45.000</span></div>
-                    <div class="price-row"><span class="price-duration">30 Hari</span><span class="price-value">Rp 120.000</span></div>
-                    <div class="price-row"><span class="price-duration">Lifetime</span><span class="price-value">Rp 350.000</span></div>
-                </div>
-                <button class="btn-order" onclick="orderProduct('STREAMER V1')">PESAN SEKARANG</button>
-            </div>
 
-            <!-- STREAMER V2 -->
-            <div class="card p-5 reveal">
-                <h3 class="font-display font-bold text-xl text-blue-300 mb-1">STREAMER V2</h3>
-                <div class="feature-list">
-                    <ul>
+                <!-- STREAMER V2 -->
+                <div class="product-card reveal tilt-card" data-category="streamer">
+                    <div class="product-header">
+                        <h3 class="product-title">STREAMER V2</h3>
+                    </div>
+                    <ul class="feature-list">
                         <li>AIMBOT HEAD</li>
                         <li>AIMBOT DRAG</li>
                         <li>AIMBOT DRAG PRO</li>
                         <li>ESP MENU</li>
                         <li>PANEL HISTORY CLEANER</li>
                     </ul>
+                    <div class="pricing-table">
+                        <div class="price-row"><span class="p-dur">1 Hari</span><span class="p-amt">Rp 15.000</span></div>
+                        <div class="price-row"><span class="p-dur">3 Hari</span><span class="p-amt">Rp 30.000</span></div>
+                        <div class="price-row"><span class="p-dur">7 Hari</span><span class="p-amt">Rp 60.000</span></div>
+                        <div class="price-row"><span class="p-dur">30 Hari</span><span class="p-amt">Rp 140.000</span></div>
+                        <div class="price-row" style="border-top: 1px solid rgba(255,255,255,0.1); margin-top: 4px; padding-top: 8px;"><span class="p-dur" style="color:rgb(var(--theme-color))">Lifetime</span><span class="p-amt">Rp 400.000</span></div>
+                    </div>
+                    <button class="btn-buy" onclick="orderProduct()">PESAN SEKARANG</button>
                 </div>
-                <div class="price-container">
-                    <div class="price-row"><span class="price-duration">1 Hari</span><span class="price-value">Rp 15.000</span></div>
-                    <div class="price-row"><span class="price-duration">3 Hari</span><span class="price-value">Rp 30.000</span></div>
-                    <div class="price-row"><span class="price-duration">7 Hari</span><span class="price-value">Rp 60.000</span></div>
-                    <div class="price-row"><span class="price-duration">30 Hari</span><span class="price-value">Rp 140.000</span></div>
-                    <div class="price-row"><span class="price-duration">Lifetime</span><span class="price-value">Rp 400.000</span></div>
-                </div>
-                <button class="btn-order" onclick="orderProduct('STREAMER V2')">PESAN SEKARANG</button>
-            </div>
 
-            <!-- STREAMER V3 -->
-            <div class="card p-5 reveal">
-                <h3 class="font-display font-bold text-xl text-blue-300 mb-1">STREAMER V3</h3>
-                <div class="feature-list">
-                    <p class="text-blue-200 text-xs font-semibold mt-0 mb-1">AIM</p>
-                    <ul>
-                        <li>Aim Silent Head (BRUTAL)</li>
-                        <li>Aim Silent Head (HS 90%)</li>
-                        <li>Aim Silent Body</li>
-                        <li>Aimbot Visible</li>
-                        <li>Aimbot Rage</li>
-                        <li>Aimbot Head</li>
-                        <li>Aimbot Drag</li>
+                <!-- STREAMER V3 -->
+                <div class="product-card reveal closed tilt-card" data-category="streamer">
+                    <div class="closed-badge">CLOSED</div>
+                    <div class="product-header">
+                        <h3 class="product-title">STREAMER V3</h3>
+                    </div>
+                    <div class="feature-cat">AIM</div>
+                    <ul class="feature-list" style="margin-bottom: 0;">
+                        <li>Aim Silent Head (BRUTAL/SAFE)</li>
+                        <li>Aimbot Visible / Rage</li>
                         <li>Aimbot Drag Pro</li>
                     </ul>
-                    <p class="text-blue-200 text-xs font-semibold mt-2 mb-1">VISUAL</p>
-                    <ul>
-                        <li>ESP Line (Top-Center-Bottom)</li>
-                        <li>ESP Name</li>
-                        <li>ESP Health</li>
-                        <li>ESP Box</li>
-                    </ul>
-                    <p class="text-blue-200 text-xs font-semibold mt-2 mb-1">SETTINGS</p>
-                    <ul>
+                    <div class="feature-cat">VISUAL & SETTINGS</div>
+                    <ul class="feature-list">
+                        <li>Full ESP (Line, Name, Box, HP)</li>
                         <li>Stream Mode</li>
                         <li>Trace Cleaner</li>
                     </ul>
+                    <div class="pricing-table">
+                        <div class="price-row"><span class="p-dur">1 Hari</span><span class="p-amt">Rp 20.000</span></div>
+                        <div class="price-row"><span class="p-dur">3 Hari</span><span class="p-amt">Rp 40.000</span></div>
+                        <div class="price-row"><span class="p-dur">7 Hari</span><span class="p-amt">Rp 70.000</span></div>
+                        <div class="price-row"><span class="p-dur">30 Hari</span><span class="p-amt">Rp 160.000</span></div>
+                        <div class="price-row" style="border-top: 1px solid rgba(255,255,255,0.1); margin-top: 4px; padding-top: 8px;"><span class="p-dur" style="color:rgb(var(--theme-color))">Lifetime</span><span class="p-amt">Rp 420.000</span></div>
+                    </div>
+                    <button class="btn-buy disabled">SOLD OUT</button>
                 </div>
-                <div class="price-container">
-                    <div class="price-row"><span class="price-duration">1 Hari</span><span class="price-value">Rp 20.000</span></div>
-                    <div class="price-row"><span class="price-duration">3 Hari</span><span class="price-value">Rp 40.000</span></div>
-                    <div class="price-row"><span class="price-duration">7 Hari</span><span class="price-value">Rp 70.000</span></div>
-                    <div class="price-row"><span class="price-duration">30 Hari</span><span class="price-value">Rp 160.000</span></div>
-                    <div class="price-row"><span class="price-duration">Lifetime</span><span class="price-value">Rp 420.000</span></div>
-                </div>
-                <button class="btn-order" onclick="orderProduct('STREAMER V3')">PESAN SEKARANG</button>
-            </div>
 
-            <!-- INTERNAL PANEL -->
-            <div class="card p-5 reveal">
-                <h3 class="font-display font-bold text-xl text-blue-300 mb-1">INTERNAL PANEL</h3>
-                <div class="feature-list">
-                    <p class="text-blue-200 text-xs font-semibold mt-0 mb-1">AIM HACKS</p>
-                    <ul>
-                        <li>SILENT AIM HEAD (BRUTAL AND HS 90%)</li>
-                        <li>SILENT AIM BODY</li>
-                        <li>AIMBOT VISIBLE</li>
-                        <li>AIMBOT RAGE</li>
-                    </ul>
-                    <p class="text-blue-200 text-xs font-semibold mt-2 mb-1">VISUAL</p>
-                    <ul>
-                        <li>ESP LINE (UP/BOTTOM)</li>
-                        <li>ESP NAME</li>
-                        <li>ESP HEALTH</li>
-                        <li>ESP BOX</li>
-                    </ul>
-                    <p class="text-blue-200 text-xs font-semibold mt-2 mb-1">SETTINGS</p>
-                    <ul>
+                <!-- INTERNAL PANEL -->
+                <div class="product-card reveal closed tilt-card" data-category="other">
+                    <div class="closed-badge">CLOSED</div>
+                    <div class="product-header">
+                        <h3 class="product-title">INTERNAL PANEL</h3>
+                    </div>
+                    <ul class="feature-list">
+                        <li>SILENT AIM HEAD / BODY</li>
+                        <li>AIMBOT VISIBLE / RAGE</li>
+                        <li>FULL ESP SYSTEM</li>
                         <li>STREAM MODE</li>
                     </ul>
+                    <div class="pricing-table">
+                        <div class="price-row"><span class="p-dur">1 Hari</span><span class="p-amt">Rp 15.000</span></div>
+                        <div class="price-row"><span class="p-dur">3 Hari</span><span class="p-amt">Rp 40.000</span></div>
+                        <div class="price-row"><span class="p-dur">7 Hari</span><span class="p-amt">Rp 80.000</span></div>
+                        <div class="price-row"><span class="p-dur">30 Hari</span><span class="p-amt">Rp 180.000</span></div>
+                        <div class="price-row" style="border-top: 1px solid rgba(255,255,255,0.1); margin-top: 4px; padding-top: 8px;"><span class="p-dur" style="color:rgb(var(--theme-color))">Lifetime</span><span class="p-amt">Rp 320.000</span></div>
+                    </div>
+                    <button class="btn-buy disabled">SOLD OUT</button>
                 </div>
-                <div class="price-container">
-                    <div class="price-row"><span class="price-duration">1 Hari</span><span class="price-value">Rp 15.000</span></div>
-                    <div class="price-row"><span class="price-duration">3 Hari</span><span class="price-value">Rp 40.000</span></div>
-                    <div class="price-row"><span class="price-duration">7 Hari</span><span class="price-value">Rp 80.000</span></div>
-                    <div class="price-row"><span class="price-duration">30 Hari</span><span class="price-value">Rp 180.000</span></div>
-                    <div class="price-row"><span class="price-duration">Lifetime</span><span class="price-value">Rp 320.000</span></div>
-                </div>
-                <button class="btn-order" onclick="orderProduct('INTERNAL PANEL')">PESAN SEKARANG</button>
-            </div>
 
-            <!-- EXTERNAL PANEL -->
-            <div class="card p-5 reveal">
-                <h3 class="font-display font-bold text-xl text-blue-300 mb-1">EXTERNAL PANEL</h3>
-                <div class="feature-list">
-                    <ul>
+                <!-- EXTERNAL PANEL -->
+                <div class="product-card reveal closed tilt-card" data-category="other">
+                    <div class="closed-badge">CLOSED</div>
+                    <div class="product-header">
+                        <h3 class="product-title">EXTERNAL PANEL</h3>
+                    </div>
+                    <ul class="feature-list">
                         <li>EXTERNAL MENU</li>
-                        <li>EXTRA MENU</li>
+                        <li>EXTRA MENU FEATURES</li>
+                        <li>SAFE & LIGHTWEIGHT</li>
                     </ul>
+                    <div class="pricing-table">
+                        <div class="price-row"><span class="p-dur">1 Hari</span><span class="p-amt">Rp 7.000</span></div>
+                        <div class="price-row"><span class="p-dur">3 Hari</span><span class="p-amt">Rp 18.000</span></div>
+                        <div class="price-row"><span class="p-dur">7 Hari</span><span class="p-amt">Rp 35.000</span></div>
+                        <div class="price-row"><span class="p-dur">30 Hari</span><span class="p-amt">Rp 80.000</span></div>
+                        <div class="price-row" style="border-top: 1px solid rgba(255,255,255,0.1); margin-top: 4px; padding-top: 8px;"><span class="p-dur" style="color:rgb(var(--theme-color))">Lifetime</span><span class="p-amt">Rp 150.000</span></div>
+                    </div>
+                    <button class="btn-buy disabled">SOLD OUT</button>
                 </div>
-                <div class="price-container">
-                    <div class="price-row"><span class="price-duration">1 Hari</span><span class="price-value">Rp 7.000</span></div>
-                    <div class="price-row"><span class="price-duration">3 Hari</span><span class="price-value">Rp 18.000</span></div>
-                    <div class="price-row"><span class="price-duration">7 Hari</span><span class="price-value">Rp 35.000</span></div>
-                    <div class="price-row"><span class="price-duration">30 Hari</span><span class="price-value">Rp 80.000</span></div>
-                    <div class="price-row"><span class="price-duration">Lifetime</span><span class="price-value">Rp 150.000</span></div>
-                </div>
-                <button class="btn-order" onclick="orderProduct('EXTERNAL PANEL')">PESAN SEKARANG</button>
-            </div>
 
-            <!-- ESP ONLY -->
-            <div class="card p-5 reveal">
-                <h3 class="font-display font-bold text-xl text-blue-300 mb-1">ESP ONLY</h3>
-                <div class="feature-list">
-                    <p class="text-blue-200 text-xs font-semibold mt-0 mb-1">ESP VISUAL</p>
-                    <ul>
+                <!-- ESP ONLY -->
+                <div class="product-card reveal tilt-card" data-category="other">
+                    <div class="product-header">
+                        <h3 class="product-title">ESP ONLY</h3>
+                    </div>
+                    <ul class="feature-list">
                         <li>ESP LINE</li>
                         <li>ESP BOX</li>
-                        <li>ESP NAME</li>
-                        <li>ESP HEALTH</li>
+                        <li>ESP NAME & HEALTH</li>
                         <li>STREAM MODE</li>
                     </ul>
-                </div>
-                <div class="price-container">
-                    <div class="price-row"><span class="price-duration">3 Hari</span><span class="price-value">Rp 6.000</span></div>
-                    <div class="price-row"><span class="price-duration">7 Hari</span><span class="price-value">Rp 14.000</span></div>
-                    <div class="price-row"><span class="price-duration">30 Hari</span><span class="price-value">Rp 33.000</span></div>
-                    <div class="price-row"><span class="price-duration">Lifetime</span><span class="price-value">Rp 140.000</span></div>
-                </div>
-                <button class="btn-order" onclick="orderProduct('ESP ONLY')">PESAN SEKARANG</button>
-            </div>
-        </div>
-    </div>
-</section>
-
-<!-- Custom Panel Service -->
-<section class="py-20 px-5 container-relative" id="custom">
-    <div class="max-w-4xl mx-auto">
-        <div class="text-center mb-12">
-            <div class="badge-modern mx-auto mb-2">LAYANAN KHUSUS</div>
-            <h2 class="font-display text-3xl md:text-5xl font-bold"><span class="text-white">CUSTOM </span><span class="text-blue-500">PANEL</span></h2>
-            <p class="text-gray-400 mt-3">Butuh panel cheat yang dipersonalisasi? Kami buat sesuai keinginanmu.</p>
-        </div>
-        <div class="bg-[#0a0f1c]/80 border border-blue-900/40 rounded-2xl p-6 md:p-8 text-center hover:border-blue-500 transition">
-            <div class="flex justify-center mb-5">
-                <div class="w-16 h-16 bg-blue-600/20 rounded-2xl flex items-center justify-center">
-                    <svg class="w-8 h-8 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.5">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M9.813 15.904L9 18.75l-.813-2.846a4.5 4.5 0 00-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 003.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 003.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 00-3.09 3.09zM18.25 12l-1.5-1.5M18.25 12l1.5 1.5M18.25 12h-3" />
-                    </svg>
+                    <div class="pricing-table">
+                        <div class="price-row"><span class="p-dur">3 Hari</span><span class="p-amt">Rp 6.000</span></div>
+                        <div class="price-row"><span class="p-dur">7 Hari</span><span class="p-amt">Rp 14.000</span></div>
+                        <div class="price-row"><span class="p-dur">30 Hari</span><span class="p-amt">Rp 33.000</span></div>
+                        <div class="price-row" style="border-top: 1px solid rgba(255,255,255,0.1); margin-top: 4px; padding-top: 8px;"><span class="p-dur" style="color:rgb(var(--theme-color))">Lifetime</span><span class="p-amt">Rp 140.000</span></div>
+                    </div>
+                    <button class="btn-buy" onclick="orderProduct()">PESAN SEKARANG</button>
                 </div>
             </div>
-            <h3 class="font-bold text-2xl mb-2">Buat Panel Cheat Sesuai Keinginan</h3>
-            <p class="text-gray-300 mb-5">Kami menerima kustomisasi: setting aimbot spesifik, tampilan ESP unik, fitur tambahan, dan lain-lain. Diskusikan kebutuhanmu dan dapatkan harga.</p>
-            <button class="btn-primary px-8 py-3 text-base" onclick="window.open('https://discord.gg/tKbWd4QAQe', '_blank')">
-                Tanya di Discord
-            </button>
-            <p class="text-gray-500 text-xs mt-5">Hubungi kami langsung untuk konsultasi custom panel.</p>
         </div>
-    </div>
-</section>
+    </section>
 
-<!-- Contact Section - English title, Indonesian content -->
-<section class="py-20 px-5 container-relative" id="contact">
-    <div class="max-w-lg mx-auto">
-        <div class="text-center mb-12">
-            <div class="badge-modern mx-auto mb-2">GET IN TOUCH</div>
-            <h2 class="font-display text-3xl md:text-5xl font-bold"><span class="text-white">CONTACT </span><span class="text-blue-500">US</span></h2>
-            <p class="text-gray-400 mt-3">Gabung Discord untuk order, dukungan, dan info update</p>
+    <!-- CUSTOM PANEL -->
+    <section class="py-24 px-5" id="custom">
+        <div class="custom-banner reveal">
+            <h2 class="section-title" style="margin-bottom: 1.5rem; font-size: 2.5rem;">CUSTOM <span>PANEL</span></h2>
+            <p class="hero-desc" style="margin-bottom: 2.5rem;">Butuh panel cheat yang dipersonalisasi? Kami buat sesuai keinginanmu dengan fitur eksklusif dan desain UI custom.</p>
+            <button class="btn-solid" style="padding: 16px 40px; font-size: 1rem;" onclick="window.open('https://discord.gg/tKbWd4QAQe', '_blank')">KONSULTASI SEKARANG</button>
         </div>
-        <div class="bg-[#0a0f1c]/80 border border-blue-900/40 rounded-2xl p-6 text-center hover:border-blue-500 transition">
-            <div class="flex justify-center mb-4">
-                <div class="w-14 h-14 bg-blue-600/20 rounded-2xl flex items-center justify-center">
-                    <svg class="w-7 h-7 text-indigo-400" fill="currentColor" viewBox="0 0 24 24">
-                        <path d="M20.317 4.37a19.791 19.791 0 0 0-4.885-1.515.074.074 0 0 0-.079.037c-.21.375-.444.864-.608 1.25a18.27 18.27 0 0 0-5.487 0 12.64 12.64 0 0 0-.617-1.25.077.077 0 0 0-.079-.037A19.736 19.736 0 0 0 3.677 4.37a.07.07 0 0 0-.032.027C.533 9.046-.32 13.58.099 18.057a.082.082 0 0 0 .031.057 19.9 19.9 0 0 0 5.993 3.03.078.078 0 0 0 .084-.028 14.09 14.09 0 0 0 1.226-1.994.076.076 0 0 0-.041-.106 13.107 13.107 0 0 1-1.872-.892.077.077 0 0 1-.008-.128 10.2 10.2 0 0 0 .372-.292.074.074 0 0 1 .077-.01c3.928 1.793 8.18 1.793 12.062 0a.074.074 0 0 1 .078.01c.12.098.246.198.373.292a.077.077 0 0 1-.006.127 12.299 12.299 0 0 1-1.873.892.077.077 0 0 0-.041.107c.36.698.772 1.362 1.225 1.993a.076.076 0 0 0 .084.028 19.839 19.839 0 0 0 6.002-3.03.077.077 0 0 0 .032-.054c.5-5.177-.838-9.674-3.549-13.66a.061.061 0 0 0-.031-.03zM8.02 15.33c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.956-2.419 2.157-2.419 1.21 0 2.176 1.096 2.157 2.42 0 1.333-.956 2.418-2.157 2.418zm7.975 0c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.955-2.419 2.157-2.419 1.21 0 2.176 1.096 2.157 2.42 0 1.333-.946 2.418-2.157 2.418z"/>
-                    </svg>
+    </section>
+
+    <!-- CONTACT SUPPORT SECTION -->
+    <section class="contact-section" id="contact">
+        <div class="contact-header reveal">
+            <h2 class="contact-title">Contact & Seller</h2>
+            <p class="contact-subtitle">Hubungi seller official kami untuk transaksi atau pertanyaan seputar produk. Layanan tersedia 24 jam.</p>
+        </div>
+
+        <div class="sellers-grid">
+            <!-- Seller Card -->
+            <div class="seller-card reveal delay-1">
+                <div class="official-badge">OFFICIAL SELLER</div>
+                
+                <div class="seller-profile">
+                    <img src="marvinxitar.png" alt="MarvinX!" class="seller-avatar" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                    <div class="avatar-placeholder" style="display: none;">MX</div>
+                    <div class="seller-info">
+                        <h3 class="seller-name">MarvinX!</h3>
+                        <span class="seller-role">Support & Seller</span>
+                    </div>
+                </div>
+
+                <div class="seller-socials">
+                    <a href="https://www.tiktok.com/@marvinxiter?is_from_webapp=1&sender_device=pc" target="_blank" class="social-btn btn-tiktok">
+                        <svg viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-5.2 1.74 2.89 2.89 0 0 1 2.31-4.64 2.93 2.93 0 0 1 .88.13V9.4a6.84 6.84 0 0 0-1-.05A6.33 6.33 0 0 0 5 20.1a6.34 6.34 0 0 0 10.86-4.43v-7a8.16 8.16 0 0 0 4.77 1.52v-3.4a4.85 4.85 0 0 1-1-.1z"/>
+                        </svg>
+                        TikTok
+                    </a>
+                    <a href="https://wa.me/62895323534080" target="_blank" class="social-btn btn-whatsapp">
+                        <svg viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/>
+                        </svg>
+                        WhatsApp
+                    </a>
+                </div>
+
+                <div class="status-indicator">
+                    <div class="status-dot"></div>
+                    <span class="status-text">Online - Siap Membantu 24/7</span>
                 </div>
             </div>
-            <h3 class="font-bold text-xl mb-2">Discord Server</h3>
-            <p class="text-gray-400 text-sm mb-5">Respon cepat, komunitas, dan dukungan instan</p>
-            <button class="btn-primary w-full py-3" onclick="window.open('https://discord.gg/tKbWd4QAQe', '_blank')">
-                MARVINX TEAM Discord
-            </button>
-            <p class="text-gray-500 text-xs mt-5">Dapatkan bantuan, update, dan langsung order</p>
         </div>
-    </div>
-</section>
+    </section>
 
-<footer class="py-8 border-t border-gray-800 text-center text-gray-500 text-sm">
-    <div class="font-display font-bold mb-1">MARVINX TEAM</div>
-    <p>© 2025 MARVINX TEAM — Spesialis Cheat FreeFire</p>
-</footer>
+    <footer>
+        <div class="brand-logo" style="justify-content: center; margin-bottom: 1rem;">
+            <div class="brand-text">
+                <span class="brand-name">MARVINX</span>
+                <span class="brand-sub">TEAM PROJECT</span>
+            </div>
+        </div>
+        <p style="color: var(--text-muted); font-size: 0.85rem;">© 2025 MARVINX TEAM PROJECT — The Ultimate Advantage.</p>
+    </footer>
 
-<script>
-    function initReveal() {
-        const reveals = document.querySelectorAll('.reveal');
-        const observer = new IntersectionObserver((entries) => {
-            entries.forEach(entry => {
-                if (entry.isIntersecting) {
-                    entry.target.classList.add('active');
+    <script>
+        // Navbar Scroll
+        window.addEventListener('scroll', () => {
+            document.getElementById('navbar').classList.toggle('scrolled', window.scrollY > 50);
+        });
+
+        // Scroll Reveal
+        function reveal() {
+            document.querySelectorAll(".reveal").forEach(el => {
+                if (el.getBoundingClientRect().top < window.innerHeight - 100) {
+                    el.classList.add("active");
                 }
             });
-        }, { threshold: 0.1 });
-        reveals.forEach(el => observer.observe(el));
-    }
+        }
+        window.addEventListener("scroll", reveal);
+        reveal();
 
-    // Now every "PESAN SEKARANG" button directly opens Discord link
-    function orderProduct(productName) {
-        window.open('https://discord.gg/tKbWd4QAQe', '_blank');
-    }
+        // Spotlight Effect for Bento Cards
+        document.getElementById("bento-cards").onmousemove = e => {
+            for(const card of document.querySelectorAll(".bento-card")) {
+                const rect = card.getBoundingClientRect(),
+                      x = e.clientX - rect.left,
+                      y = e.clientY - rect.top;
+                card.style.setProperty("--mouse-x", `${x}px`);
+                card.style.setProperty("--mouse-y", `${y}px`);
+            }
+        };
 
-    function animateStats() {
-        const stats = [
-            { el: document.querySelector('.grid-cols-3 .text-blue-400:first-child'), target: 200, suffix: '+' },
-            { el: document.querySelector('.grid-cols-3 .text-blue-400:nth-child(2)'), target: 99, suffix: '%' },
-            { el: document.querySelector('.grid-cols-3 .text-blue-400:last-child'), target: 24, suffix: '/7' }
-        ];
-        stats.forEach(stat => {
-            if (!stat.el) return;
-            const observer = new IntersectionObserver((entries) => {
-                entries.forEach(entry => {
-                    if (entry.isIntersecting && !stat.el.getAttribute('data-animated')) {
-                        stat.el.setAttribute('data-animated', 'true');
-                        let current = 0;
-                        const step = stat.target / 35;
-                        const timer = setInterval(() => {
-                            current += step;
-                            if (current >= stat.target) {
-                                stat.el.innerText = stat.target + stat.suffix;
-                                clearInterval(timer);
-                            } else {
-                                stat.el.innerText = Math.floor(current) + stat.suffix;
-                            }
-                        }, 30);
-                        observer.unobserve(stat.el);
-                    }
+        // 3D Tilt Effect for Product Cards
+        if (window.matchMedia("(min-width: 900px)").matches) {
+            document.querySelectorAll(".tilt-card").forEach(card => {
+                
+                card.addEventListener("mousemove", e => {
+                    const rect = card.getBoundingClientRect();
+                    const x = e.clientX - rect.left;
+                    const y = e.clientY - rect.top;
+                    const centerX = rect.width / 2;
+                    const centerY = rect.height / 2;
+                    
+                    const rotateX = ((y - centerY) / centerY) * -10;
+                    const rotateY = ((x - centerX) / centerX) * 10;
+                    
+                    card.style.transform = `perspective(1500px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale3d(1.02, 1.02, 1.02)`;
                 });
-            }, { threshold: 0.5 });
-            observer.observe(stat.el);
-        });
-    }
+                
+                card.addEventListener("mouseleave", () => {
+                    card.style.transform = `perspective(1500px) rotateX(0deg) rotateY(0deg) scale3d(1, 1, 1)`;
+                });
+            });
+        }
 
-    document.addEventListener('DOMContentLoaded', () => {
-        initReveal();
-        animateStats();
-    });
-</script>
+        // Stats Counter
+        let animated = false;
+        function animateStats() {
+            if (animated) return;
+            const statsContainer = document.querySelector('.stats-wrapper');
+            if (!statsContainer) return;
+            
+            if (statsContainer.getBoundingClientRect().top < window.innerHeight - 50) {
+                document.querySelectorAll('.stat-counter').forEach(stat => {
+                    const targetStr = stat.getAttribute('data-target');
+                    if (targetStr === '24/7') { stat.innerText = '24/7'; return; }
+                    
+                    const target = parseInt(targetStr) || 0;
+                    const increment = target / 50;
+                    let current = 0;
+                    const updateCounter = () => {
+                        current += increment;
+                        if (current < target) {
+                            stat.innerText = Math.ceil(current);
+                            requestAnimationFrame(updateCounter);
+                        } else {
+                            stat.innerText = target + (target === 99 ? '%' : '+');
+                        }
+                    };
+                    updateCounter();
+                });
+                animated = true;
+            }
+        }
+        window.addEventListener('scroll', animateStats);
+        setTimeout(animateStats, 500);
+
+        function orderProduct() { window.open('https://discord.gg/tKbWd4QAQe', '_blank'); }
+
+        // Tab Switcher
+        window.switchTab = function(tabId) {
+            document.querySelectorAll('.tab-btn').forEach(btn => {
+                if (btn.getAttribute('data-tab') === tabId) btn.classList.add('active');
+                else btn.classList.remove('active');
+            });
+            
+            document.querySelectorAll('.product-card').forEach(card => {
+                card.classList.remove('active');
+                if (card.getAttribute('data-category') === tabId) {
+                    card.style.display = 'flex';
+                    setTimeout(() => card.classList.add('active'), 50);
+                } else {
+                    card.style.display = 'none';
+                }
+            });
+        }
+        
+        // Init tabs
+        setTimeout(() => switchTab('streamer'), 50);
+
+        // Dynamic Color Extraction
+        window.addEventListener('load', () => {
+            const img = new Image();
+            img.src = 'logo.png';
+            img.onload = function () {
+                const canvas = document.createElement('canvas');
+                const ctx = canvas.getContext('2d');
+                canvas.width = img.width; canvas.height = img.height;
+                ctx.drawImage(img, 0, 0);
+
+                try {
+                    const data = ctx.getImageData(0, 0, canvas.width, canvas.height).data;
+                    let r = 0, g = 0, b = 0, count = 0;
+
+                    for (let i = 0; i < data.length; i += 4) {
+                        if (data[i + 3] > 128 && (data[i] > 20 || data[i + 1] > 20 || data[i + 2] > 20) && (data[i] < 240 || data[i + 1] < 240 || data[i + 2] < 240)) {
+                            r += data[i]; g += data[i + 1]; b += data[i + 2]; count++;
+                        }
+                    }
+
+                    if (count > 0) {
+                        r = Math.floor(r / count); g = Math.floor(g / count); b = Math.floor(b / count);
+                        const max = Math.max(r, g, b);
+                        if (max < 200 && max > 0) {
+                            const factor = 220 / max;
+                            r = Math.min(255, Math.floor(r * factor));
+                            g = Math.min(255, Math.floor(g * factor));
+                            b = Math.min(255, Math.floor(b * factor));
+                        }
+                        document.documentElement.style.setProperty('--theme-color', `${r}, ${g}, ${b}`);
+                    }
+                } catch (e) { console.log("Color extraction skipped, using fallback"); }
+            };
+        });
+
+        // Preloader Logic
+        window.addEventListener('load', () => {
+            const preloader = document.getElementById('preloader');
+            const loaderBar = document.querySelector('.loader-bar');
+            const loaderText = document.querySelector('.loader-text');
+            
+            let progress = 0;
+            const interval = setInterval(() => {
+                progress += Math.floor(Math.random() * 15) + 5;
+                if (progress > 100) progress = 100;
+                loaderBar.style.width = `${progress}%`;
+                
+                if (progress >= 100) {
+                    clearInterval(interval);
+                    loaderText.innerText = 'SYSTEM READY';
+                    loaderText.style.color = `rgb(var(--theme-color))`;
+                    
+                    setTimeout(() => {
+                        preloader.classList.add('fade-out');
+                        setTimeout(() => {
+                            document.body.style.overflow = 'auto';
+                            document.body.style.overflowX = 'hidden';
+                            reveal();
+                        }, 300);
+                    }, 500);
+                }
+            }, 100);
+        });
+
+        // Custom Cursor
+        if (window.matchMedia("(min-width: 900px)").matches) {
+            const cursorDot = document.createElement('div');
+            cursorDot.className = 'cursor-dot';
+            const cursorOutline = document.createElement('div');
+            cursorOutline.className = 'cursor-outline';
+            document.body.appendChild(cursorDot);
+            document.body.appendChild(cursorOutline);
+
+            window.addEventListener('mousemove', (e) => {
+                cursorDot.style.left = `${e.clientX}px`;
+                cursorDot.style.top = `${e.clientY}px`;
+                
+                cursorOutline.animate({
+                    left: `${e.clientX}px`,
+                    top: `${e.clientY}px`
+                }, { duration: 300, fill: "forwards" });
+            });
+
+            document.querySelectorAll('a, button, .tilt-card, .seller-card').forEach(el => {
+                el.addEventListener('mouseenter', () => {
+                    cursorDot.style.transform = 'translate(-50%, -50%) scale(4)';
+                    cursorDot.style.background = 'rgba(var(--theme-color), 0.5)';
+                    cursorOutline.style.opacity = '0';
+                });
+                el.addEventListener('mouseleave', () => {
+                    cursorDot.style.transform = 'translate(-50%, -50%) scale(1)';
+                    cursorDot.style.background = 'rgb(var(--theme-color))';
+                    cursorOutline.style.opacity = '1';
+                });
+            });
+        }
+
+        // ============ SHIELD PROTECTION ============
+        // Anti-Inspect (DevTools Detection)
+        setInterval(() => {
+            const threshold = 160;
+            if (window.outerWidth - window.innerWidth > threshold || window.outerHeight - window.innerHeight > threshold) {
+                if (confirm("DevTools terdeteksi! Website ini dilindungi. Lanjutkan?")) {
+                    // Allow if user confirms
+                } else {
+                    // Clear all data and show message
+                    document.body.innerHTML = "<div style='display:flex;align-items:center;justify-content:center;height:100vh;font-family:Arial;background:#030305;color:#fff;flex-direction:column;text-align:center;'><h1>⚠️ Akses Ditolak</h1><p>Inspeksi tidak diizinkan di website ini</p></div>";
+                    throw new Error("DevTools detected - access denied");
+                }
+            }
+        }, 500);
+
+        // Anti-Console (Block console abuse)
+        Object.defineProperty(window, 'console', {
+            get: function() {
+                const error = new Error('Console access is blocked');
+                error.stack = '';
+                throw error;
+            }
+        });
+
+        // Anti-Debugger
+        const devtools = { open: false };
+        const threshold = 160;
+        setInterval(() => {
+            if (window.outerHeight - window.innerHeight > threshold) devtools.open = true;
+            if (devtools.open) {
+                debugger;
+            }
+        }, 1000);
+
+        // Anti-Bot & Anti-Scraper Detection
+        if (navigator.webdriver || window.document.documentElement.getAttribute('webdriver')) {
+            document.body.innerHTML = "<div style='display:flex;align-items:center;justify-content:center;height:100vh;font-family:Arial;background:#030305;color:#fff;flex-direction:column;text-align:center;'><h1>🤖 Bot Detected</h1><p>Automated access tidak diizinkan</p></div>";
+            throw new Error("Bot detected - access denied");
+        }
+
+        // Anti-CURL Detection (Check for headless browser)
+        if (!window.chrome || !window.chrome.loadTimes) {
+            const isHeadless = !/mobile|tablet/i.test(navigator.userAgent) && 
+                               (navigator.userAgentData?.mobile === false);
+            if (isHeadless && !navigator.plugins.length) {
+                console.error("Headless browser detected");
+            }
+        }
+
+        // Disable Right Click
+        document.addEventListener('contextmenu', (e) => {
+            e.preventDefault();
+            return false;
+        });
+
+        // Disable Keyboard Shortcuts
+        document.addEventListener('keydown', (e) => {
+            // Ctrl+Shift+I, F12, Ctrl+J (DevTools)
+            if ((e.ctrlKey && e.shiftKey && e.keyCode === 73) || 
+                e.keyCode === 123 || 
+                (e.ctrlKey && e.keyCode === 74) ||
+                (e.ctrlKey && e.keyCode === 83)) { // Ctrl+S
+                e.preventDefault();
+                return false;
+            }
+        });
+
+        // Disable Copy-Paste
+        document.addEventListener('copy', (e) => {
+            e.preventDefault();
+            alert("Content copy tidak diizinkan!");
+        });
+
+        // Disable Drag
+        document.addEventListener('dragstart', (e) => {
+            e.preventDefault();
+        });
+
+        // Monitor Network Requests (Anti-CURL/Scraper)
+        const originalFetch = window.fetch;
+        window.fetch = function(...args) {
+            const userAgent = navigator.userAgent;
+            // Block common scraper user agents
+            if (userAgent.includes('curl') || userAgent.includes('wget') || 
+                userAgent.includes('scrapy') || userAgent.includes('python') ||
+                userAgent.includes('java') || !userAgent.includes('Mozilla')) {
+                console.error("Scraper detected!");
+                return Promise.reject(new Error("Access denied"));
+            }
+            return originalFetch.apply(this, args);
+        };
+
+        // Disable Selection
+        document.body.style.userSelect = 'none';
+        document.body.style.webkitUserSelect = 'none';
+        document.body.style.msUserSelect = 'none';
+    </script>
 </body>
 </html>
